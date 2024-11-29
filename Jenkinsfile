@@ -1,38 +1,23 @@
 pipeline {
     agent any
-
     stages {
-        stage('Build') {
+        stage('Git clone') { 
             steps {
-                echo 'Building...'
-                // Add your build steps here, e.g., compiling code, downloading dependencies
+                git 'https://github.com/Shreenivas123/demo-java.git'
             }
         }
-        
-        stage('Test') {
+        stage('Build') { 
             steps {
-                echo 'Testing...'
-                // Add your test steps here, e.g., running unit tests, static code analysis
+                sh 'mvn clean package'
             }
         }
-        
-        stage('Deploy') {
+        stage('Deploy to tomcat') { 
             steps {
-                echo 'Deploying...'
-                // Add your deployment steps here, e.g., copying files, restarting services
+                sh 'echo "i am Deploying"'
+                sh 'sudo cp /home/jenkins/jenkins_slave/workspace/pipeline_job/target/demo.war /opt/tomcat/apache-tomcat-10.1.12/webapps/' 
+                sh 'sudo bash /home/ubuntu/apache-tomcat-9.0.97/bin/.shutdown.sh'
+                sh 'sudo bash /home/ubuntu/apache-tomcat-9.0.97/bin/.startup.sh'
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'This will always run'
-        }
-        success {
-            echo 'This will run only if the pipeline succeeds'
-        }
-        failure {
-            echo 'This will run only if the pipeline fails'
         }
     }
 }
